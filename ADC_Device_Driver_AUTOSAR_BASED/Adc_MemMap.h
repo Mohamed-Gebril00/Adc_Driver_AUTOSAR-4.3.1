@@ -10,7 +10,6 @@
 #define ADC_MEMMAP_H
 
 
-
 /**
   * ADC Module bases Page 815 TM4C123GH6PM
   */
@@ -83,23 +82,28 @@
 #define ADCPC						0xFC4						// ADC Peripheral Configuration
 #define ADCCC						0xFC8						// ADC Clock Configuration
 
-
-/* Clock gating control */
-#define SYSCTL_RCGC0_R          (*((volatile uint32_t *)0x400FE100)) // Run mode clock gating control 
+#define ADC_MUX0_MODULE0_REG	(ADC0BASEADDRESS + ADCSSMUX0)	
+#define ADC_MUX1_MODULE0_REG ((ADC0BASEADDRESS + ADCSSMUX1))
+#define ADC_MUX2_MODULE0_REG ((ADC0BASEADDRESS + ADCSSMUX2))
+#define ADC_MUX3_MODULE0_REG ((ADC0BASEADDRESS + ADCSSMUX3))
+#define ADC_MUX0_MODULE1_REG ((ADC1BASEADDRESS + ADCSSMUX0))
+#define ADC_MUX1_MODULE1_REG ((ADC1BASEADDRESS + ADCSSMUX1))
+#define ADC_MUX2_MODULE1_REG ((ADC1BASEADDRESS + ADCSSMUX2))
+#define ADC_MUX3_MODULE1_REG (*(volatile uint32_t* const) (ADC1BASEADDRESS + ADCSSMUX3))
+ 
 
 /************************************************************************************************
  * The Following are defined for the bit fields in RCGC0 register (For The ADC modules only.)
- ************************************************************************************************/
-#define ADC0_BITFIELD				0x00000001		// ADC0 Clock Gating Control in RCGCADC
-#define ADC1_BITFIELD 				0x00000002		// ADC1 Clock Gating Control in RCGCADC
-#define MAXADC0SPD_BITNUM			8				// ADC0 Sample Speed Bits Number
-#define MAXADC1SPD_BITNUM			10				// ADC1 Sample Speed Bits Number
-/**********************************************************************************************************/
-
+	*/
+#define ADC0						0x00010000		// ADC0 Clock Gating Control
+#define ADC1 						0x00020000		// ADC1 Clock Gating Control
+#define MAXADC0SPD 			8							// ADC0 Sample Speed shift
+#define MAXADC1SPD 			10						// ADC1 Sample Speed shift
 
 /******************************************************************************
  * The Following are defined for the bit fields in ADCACTSS registers
  ******************************************************************************/
+#define BUSY_BITFIELD 	0x00010000
 #define ASEN0_BITFIELD	0x00000001								// Sequencer0 enable bit 0 
 #define ASEN1_BITFIELD	0x00000002								// Sequencer1 enable bit 1
 #define ASEN2_BITFIELD	0x00000004								// Sequencer2 enable bit 2
@@ -167,5 +171,18 @@
 #define MASK1_BITNUM 			1
 #define MASK2_BITNUM			2	
 #define MASK3_BITNUM			3
+
+/**************************************************************************************************
+* ADC IRQ number.
+***************************************************************************************************/
+#define ADC0_SS0IRQ	14
+#define ADC0_SS1IRQ	15
+#define ADC0_SS2IRQ	16
+#define ADC0_SS3IRQ	17
+#define	ADC1_SS0IRQ	48
+#define ADC1_SS1IRQ	49
+#define ADC1_SS2IRQ	50	
+#define ADC1_SS3IRQ	51
+
 	
 #endif

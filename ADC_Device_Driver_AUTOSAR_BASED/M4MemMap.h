@@ -48,7 +48,6 @@ typedef volatile uint32_t * const M4_PrefRegType;
 /***********************************************************************************/
 /*Clock gating Registers*/
 #define SYS_CTRL_BASE_ADDRESS 0x400FE000
-#define RCGC0			 *((M4_PrefRegType)(SYS_CTRL_BASE_ADDRESS + 0x100))	// For ADC Max Ssampling speed
 #define RCGCWD_REG       *((M4_PrefRegType)(SYS_CTRL_BASE_ADDRESS + 0x600))
 #define RCGCTIMER_REG    *((M4_PrefRegType)(SYS_CTRL_BASE_ADDRESS + 0x604))
 #define RCGCGPIO_REG     *((M4_PrefRegType)(SYS_CTRL_BASE_ADDRESS + 0x608))
@@ -65,6 +64,8 @@ typedef volatile uint32_t * const M4_PrefRegType;
 #define RCGCQEI_REG      *((M4_PrefRegType)(SYS_CTRL_BASE_ADDRESS + 0x644))
 #define RCGCEEPROM_REG   *((M4_PrefRegType)(SYS_CTRL_BASE_ADDRESS + 0x658))
 #define RCGCWTIMER_REG   *((M4_PrefRegType)(SYS_CTRL_BASE_ADDRESS + 0x65C))
+#define RCGC0_REG		 *((M4_PrefRegType)(SYS_CTRL_BASE_ADDRESS + 0x100))
+#define RCGC1_REG		 *((M4_PrefRegType)(SYS_CTRL_BASE_ADDRESS + 0x200))
 /***********************************************************************************/
 
 #endif
