@@ -11,12 +11,12 @@
 #define ADC_H
 
 #include <stdint.h>
-
-#include "ADC_Confg.h" 
 #include "M4MemMap.h"
 #include "Adc_MemMap.h"
 
+#define NULL ((void *)0) 
 
+typedef void(*ADC_FnPtrType)(void);
 typedef enum{ADC_OK=0, ADC_E_PARAM_GROUP, ADC_E_WRONG_TRIGG_SRC, ADC_E_BUSY, ADC_NOK} Adc_FunctionValidation;
 typedef enum{ADC_ModuleOff=0, ADC_ModuleOn} ADC_ConfigureEnDis;
 typedef enum {ADC_CH0=0, ADC_CH1, ADC_CH2, ADC_CH3, ADC_CH4, ADC_CH5, ADC_CH6, ADC_CH7, ADC_CH8, ADC_CH9, ADC_CH10, 
@@ -33,12 +33,15 @@ typedef enum {ADC_SEQ0=0, ADC_SEQ1, ADC_SEQ2, ADC_SEQ3} Adc_SequencerType;
 typedef struct 
 {
 	uint8_t AdcChannelsNum;
+	uint8_t AdcStreamingNumSamples;
+	uint8_t NumberOfSamplesFinished;
 	Adc_ModuleType AdcModule;
 	Adc_SequencerType AdcSequencer;
 	Adc_TriggerSourceType Adc_TriggerSource;	
 	Adc_StatusType Adc_Status;
+	ADC_FnPtrType CbkFnPtr;
 	Adc_Channels AdcGroupDefinition[8];
-	
+	uint16_t* Group_Buffer;
 }AdcGroup;
 	
 
@@ -78,6 +81,5 @@ Adc_FunctionValidation Adc_StartGroupConversion(uint8_t AdcGroupIdx);
  *************************************************************************************************/
 void Adc_EnableGroupNotification(uint8_t AdcGroupIdx, uint8_t PRI);
 
-	
- 
+
 #endif

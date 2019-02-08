@@ -10,7 +10,7 @@
 
 #ifndef ADC_CONFG_H
 #define ADC_CONFG_H
-#define NUMBER_OF_GROUPS 2
+#define NUMBER_OF_ADC_GROUPS 1
 
 #include "ADC.h"
 
