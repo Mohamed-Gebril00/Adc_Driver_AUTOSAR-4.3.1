@@ -17,7 +17,7 @@
 #define NULL ((void *)0) 
 
 typedef void(*ADC_FnPtrType)(void);
-typedef enum{ADC_OK=0, ADC_E_PARAM_GROUP, ADC_E_WRONG_TRIGG_SRC, ADC_E_BUSY, ADC_NOK} Adc_FunctionValidation;
+typedef enum{ADC_OK=0, ADC_E_PARAM_GROUP, ADC_E_WRONG_TRIGG_SRC, ADC_E_BUSY, ADC_E_BUFFER_UNINIT, ADC_NOK} Adc_FunctionValidation;
 typedef enum{ADC_ModuleOff=0, ADC_ModuleOn} ADC_ConfigureEnDis;
 typedef enum {ADC_CH0=0, ADC_CH1, ADC_CH2, ADC_CH3, ADC_CH4, ADC_CH5, ADC_CH6, ADC_CH7, ADC_CH8, ADC_CH9, ADC_CH10, 
 ADC_CH11} Adc_Channels;
@@ -27,6 +27,8 @@ typedef enum {ADC_125K=0,ADC_250K, ADC_500K, ADC_1M} ADC_MaxSamplingPerSecond;
 typedef enum {ADC_IDLE=0, ADC_BUSY, ADC_COMPLETED, ADC_STREAM_COMPLETED} Adc_StatusType;
 typedef enum {ADC_MODULE0=0, ADC_MODULE1} Adc_ModuleType;
 typedef enum {ADC_SEQ0=0, ADC_SEQ1, ADC_SEQ2, ADC_SEQ3} Adc_SequencerType;
+typedef enum{ADC_GROUP_PRI_0=0, ADC_GROUP_PRI_1, ADC_GROUP_PRI_2, ADC_GROUP_PRI_3} Adc_GroupPriorityType;
+typedef enum{ADC_GROUP_NOTIFICATION_ENABLED = 0, ADC_GROUP_NOTIFICATION_DISABLED} Adc_GroupNotificatonType; 
 
 
 			 
@@ -39,6 +41,8 @@ typedef struct
 	Adc_SequencerType AdcSequencer;
 	Adc_TriggerSourceType Adc_TriggerSource;	
 	Adc_StatusType Adc_Status;
+	Adc_GroupNotificatonType Adc_GroupNotificaton;
+	Adc_GroupPriorityType Adc_GroupPriority;
 	ADC_FnPtrType CbkFnPtr;
 	Adc_Channels AdcGroupDefinition[8];
 	uint16_t* Group_Buffer;
@@ -53,6 +57,10 @@ typedef struct
 Adc_FunctionValidation ADC_Init(void);
 
 
+/********************************************************************************************************
+ * Initialize each group with the corresponding DataBuffer. 
+ ********************************************************************************************************/
+Adc_FunctionValidation Adc_SetupResultBuffer(uint8_t Group, uint16_t* DataBufferPtr);
 
 
 /*********************************************************************************************************
@@ -76,10 +84,11 @@ Adc_StatusType Adc_GetGroupStatus(uint8_t AdcGroupIdx);
  **********************************************************************************************/
 Adc_FunctionValidation Adc_StartGroupConversion(uint8_t AdcGroupIdx);
 
+
 /*************************************************************************************************
  * This Function Enable the interrupt 
  *************************************************************************************************/
-void Adc_EnableGroupNotification(uint8_t AdcGroupIdx, uint8_t PRI);
+void Adc_EnableGroupNotification(uint8_t AdcGroupIdx);
 
 
 #endif

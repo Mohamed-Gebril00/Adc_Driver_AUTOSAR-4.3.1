@@ -8,10 +8,9 @@
 
 #include "ADC_Confg.h"
 
-void ADCGroup0_CallBack();
-extern uint16_t Group0_Buffer[5];
+
 AdcGroup Adc_GroupParameters[NUMBER_OF_ADC_GROUPS]=
 {
-{1, ADC_MODULE0,0,1, ADC_SEQ3 ,Adc_Continous,ADC_IDLE,
-	ADCGroup0_CallBack, {ADC_CH0}, Group0_Buffer
+{1, ADC_MODULE0,0,1, ADC_SEQ3 ,Adc_Continous,ADC_IDLE,ADC_GROUP_NOTIFICATION_DISABLED,ADC_GROUP_PRI_0,
+	AdcGroup0_CallBack, {ADC_CH0}, NULL
 }};

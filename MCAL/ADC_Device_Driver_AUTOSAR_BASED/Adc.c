@@ -13,6 +13,8 @@
 
 extern  AdcGroup Adc_GroupParameters[NUMBER_OF_ADC_GROUPS];
 
+static uint8_t Adc_ResultBufferInitialized[NUMBER_OF_ADC_GROUPS]={0};
+
 typedef volatile uint32_t* const Adc_RegAddType;
 
 
@@ -136,11 +138,12 @@ void ADC0SS0_Handler(void)
 	
 	AdcGroup* GrpPtr = &Adc_GroupParameters[Adc_GroupIdxToHandler[0][0]];
 	uint8_t Cnt = GrpPtr->NumberOfSamplesFinished,loop_idx=0;
-	Cnt++;
-	for(loop_idx = (Cnt*(GrpPtr->AdcStreamingNumSamples));(loop_idx<(GrpPtr->AdcChannelsNum*Cnt));loop_idx++)
+	
+	for(loop_idx = (Cnt*(GrpPtr->AdcStreamingNumSamples));(loop_idx<(GrpPtr->AdcChannelsNum*(Cnt+1)));loop_idx++)
 	{
 		*((GrpPtr->Group_Buffer)+loop_idx) = ADC_SSFIFO(0,0);
 	}
+	Cnt++;
 	if(Cnt == (GrpPtr->AdcStreamingNumSamples))
 	{
 		 Cnt=0;
@@ -154,11 +157,12 @@ void ADC0SS1_Handler(void)
 	
 	AdcGroup* GrpPtr = &Adc_GroupParameters[Adc_GroupIdxToHandler[0][1]];
 	uint8_t Cnt = GrpPtr->NumberOfSamplesFinished,loop_idx=0;
-	Cnt++;
-	for(loop_idx = (Cnt*(GrpPtr->AdcStreamingNumSamples));(loop_idx<(GrpPtr->AdcChannelsNum*Cnt));loop_idx++)
+	
+	for(loop_idx = (Cnt*(GrpPtr->AdcStreamingNumSamples));(loop_idx<(GrpPtr->AdcChannelsNum*(Cnt+1)));loop_idx++)
 	{
 		*((GrpPtr->Group_Buffer)+loop_idx) = ADC_SSFIFO(0,1);
 	}
+	Cnt++;
 	if(Cnt == (GrpPtr->AdcStreamingNumSamples))
 	{
 		 Cnt=0;
@@ -171,11 +175,12 @@ void ADC0SS2_Handler(void)
 	
 	AdcGroup* GrpPtr = &Adc_GroupParameters[Adc_GroupIdxToHandler[0][2]];
 	uint8_t Cnt = GrpPtr->NumberOfSamplesFinished,loop_idx=0;
-	Cnt++;
-	for(loop_idx = (Cnt*(GrpPtr->AdcStreamingNumSamples));(loop_idx<(GrpPtr->AdcChannelsNum*Cnt));loop_idx++)
+	
+	for(loop_idx = (Cnt*(GrpPtr->AdcStreamingNumSamples));(loop_idx<(GrpPtr->AdcChannelsNum*(Cnt+1)));loop_idx++)
 	{
 		*((GrpPtr->Group_Buffer)+loop_idx) = ADC_SSFIFO(0,2);
 	}
+	Cnt++;
 	if(Cnt == (GrpPtr->AdcStreamingNumSamples))
 	{
 		 Cnt=0;
@@ -189,11 +194,12 @@ void ADC0SS3_Handler(void)
 	
 	AdcGroup* GrpPtr = &Adc_GroupParameters[Adc_GroupIdxToHandler[0][3]];
 	uint8_t Cnt = GrpPtr->NumberOfSamplesFinished,loop_idx=0;
-	Cnt++;
-	for(loop_idx = (Cnt*(GrpPtr->AdcStreamingNumSamples));(loop_idx<(GrpPtr->AdcChannelsNum*Cnt));loop_idx++)
+
+	for(loop_idx = (Cnt*(GrpPtr->AdcStreamingNumSamples));(loop_idx<(GrpPtr->AdcChannelsNum*(Cnt+1)));loop_idx++)
 	{
 		*((GrpPtr->Group_Buffer)+loop_idx) = ADC_SSFIFO(0,3);
 	}
+		Cnt++;
 	if(Cnt == (GrpPtr->AdcStreamingNumSamples))
 	{
 		 Cnt=0;
@@ -207,11 +213,12 @@ void ADC1SS0_Handler(void)
 	
 	AdcGroup* GrpPtr = &Adc_GroupParameters[Adc_GroupIdxToHandler[1][0]];
 	uint8_t Cnt = GrpPtr->NumberOfSamplesFinished,loop_idx=0;
-	Cnt++;
-	for(loop_idx = (Cnt*(GrpPtr->AdcStreamingNumSamples));(loop_idx<(GrpPtr->AdcChannelsNum*Cnt));loop_idx++)
+	
+	for(loop_idx = (Cnt*(GrpPtr->AdcStreamingNumSamples));(loop_idx<(GrpPtr->AdcChannelsNum*(Cnt+1)));loop_idx++)
 	{
 		*((GrpPtr->Group_Buffer)+loop_idx) = ADC_SSFIFO(1,0);
 	}
+	Cnt++;
 	if(Cnt == (GrpPtr->AdcStreamingNumSamples))
 	{
 		 Cnt=0;
@@ -225,11 +232,12 @@ void ADC1SS1_Handler(void)
 	
 	AdcGroup* GrpPtr = &Adc_GroupParameters[Adc_GroupIdxToHandler[1][1]];
 	uint8_t Cnt = GrpPtr->NumberOfSamplesFinished,loop_idx=0;
-	Cnt++;
-	for(loop_idx = (Cnt*(GrpPtr->AdcStreamingNumSamples));(loop_idx<(GrpPtr->AdcChannelsNum*Cnt));loop_idx++)
+	
+	for(loop_idx = (Cnt*(GrpPtr->AdcStreamingNumSamples));(loop_idx<(GrpPtr->AdcChannelsNum*(Cnt+1)));loop_idx++)
 	{
 		*((GrpPtr->Group_Buffer)+loop_idx) = ADC_SSFIFO(1,1);
 	}
+	Cnt++;
 	if(Cnt == (GrpPtr->AdcStreamingNumSamples))
 	{
 		 Cnt=0;
@@ -242,11 +250,12 @@ void ADC1SS2_Handler(void)
 	
 	AdcGroup* GrpPtr = &Adc_GroupParameters[Adc_GroupIdxToHandler[1][2]];
 	uint8_t Cnt = GrpPtr->NumberOfSamplesFinished,loop_idx=0;
-	Cnt++;
-	for(loop_idx = (Cnt*(GrpPtr->AdcStreamingNumSamples));(loop_idx<(GrpPtr->AdcChannelsNum*Cnt));loop_idx++)
+	
+	for(loop_idx = (Cnt*(GrpPtr->AdcStreamingNumSamples));(loop_idx<(GrpPtr->AdcChannelsNum*(Cnt+1)));loop_idx++)
 	{
 		*((GrpPtr->Group_Buffer)+loop_idx) = ADC_SSFIFO(1,2);
 	}
+	Cnt++;
 	if(Cnt == (GrpPtr->AdcStreamingNumSamples))
 	{
 		 Cnt=0;
@@ -260,11 +269,12 @@ void ADC1SS3_Handler(void)
 	
 	AdcGroup* GrpPtr = &Adc_GroupParameters[Adc_GroupIdxToHandler[1][3]];
 	uint8_t Cnt = GrpPtr->NumberOfSamplesFinished,loop_idx=0;
-	Cnt++;
-	for(loop_idx = (Cnt*(GrpPtr->AdcStreamingNumSamples));(loop_idx<(GrpPtr->AdcChannelsNum*Cnt));loop_idx++)
+
+	for(loop_idx = (Cnt*(GrpPtr->AdcStreamingNumSamples));(loop_idx<(GrpPtr->AdcChannelsNum*(Cnt+1)));loop_idx++)
 	{
 		*((GrpPtr->Group_Buffer)+loop_idx) = ADC_SSFIFO(1,3);
 	}
+	Cnt++;
 	if(Cnt == (GrpPtr->AdcStreamingNumSamples))
 	{
 		 Cnt=0;
@@ -283,7 +293,7 @@ Adc_FunctionValidation ADC_Init(void)
 	Adc_FunctionValidation Function_ValidationReturn = ADC_OK, ADC_CalledFunctionReturn = ADC_OK;
 	FIFO_FunctionReturn FIFO_FunctionValidation = FIFO_OK;
 	uint8_t ADC_LoopIdx, ADC_Err=0;
-	
+	AdcGroup *GrpPtr;
 	// Check Module 0 Configure
 	if (CONFIGUREMODULE0 == ADC_ModuleOn)
 	{
@@ -323,17 +333,27 @@ Adc_FunctionValidation ADC_Init(void)
 	}
 	else 
 	{
-		 AdcGroup *GrpPtr;
 		for( ADC_LoopIdx = 0 ; ADC_LoopIdx < NUMBER_OF_ADC_GROUPS ; ADC_LoopIdx++)
 		{
-			GrpPtr = &Adc_GroupParameters[ADC_LoopIdx];
-			(GrpPtr->Adc_Status) = ADC_IDLE;
+			(GrpPtr) = &Adc_GroupParameters[ADC_LoopIdx];
+		  (GrpPtr->Adc_Status) = ADC_IDLE;
+		  (GrpPtr->Adc_GroupNotificaton)= ADC_GROUP_NOTIFICATION_DISABLED;
+			(GrpPtr->NumberOfSamplesFinished) = 0;
 		}
 		// Initialize the ADC_queue to be used in organising the system calls.
 		FIFO_FunctionValidation = FIFO_Init(ADC_queue);
 	}
 	return Function_ValidationReturn;
-	
+}
+
+
+Adc_FunctionValidation Adc_SetupResultBuffer(uint8_t Group, uint16_t* DataBufferPtr)
+{
+	  Adc_FunctionValidation Fuction_Validation = ADC_OK;
+	  AdcGroup *GrpPtr;
+	  Adc_ResultBufferInitialized[Group] = 1;
+	  (GrpPtr->Group_Buffer) = DataBufferPtr;
+	  return Fuction_Validation;
 }
 
 /*******************************************************************************************
@@ -346,7 +366,13 @@ Adc_FunctionValidation ADC_Init(void)
 Adc_StatusType Adc_GetGroupStatus(uint8_t AdcGroupIdx)
 {
 		Adc_FunctionValidation Function_ValidationReturn = ADC_OK;
-		 AdcGroup *GrpPtr;
+		AdcGroup *GrpPtr;
+		Adc_StatusType Adc_Status;
+	  uint8_t loop_idx = 0;
+	
+	  // This variable to hold the number of channels and the number of samples required per channel.
+	  uint8_t Number_Of_Samples_Req_Group;
+	  uint8_t Number_Of_Samples_Finished;
 		if(AdcGroupIdx >= NUMBER_OF_ADC_GROUPS)
 		{
 			Function_ValidationReturn = ADC_E_PARAM_GROUP;
@@ -354,16 +380,44 @@ Adc_StatusType Adc_GetGroupStatus(uint8_t AdcGroupIdx)
 		else 
 		{
 			GrpPtr = &Adc_GroupParameters[AdcGroupIdx];
-			if( ((ADCRIS_REG(GrpPtr->AdcModule)) & (1<<(GrpPtr->AdcSequencer))) != 0)
+			Number_Of_Samples_Req_Group = (GrpPtr->AdcChannelsNum) * (GrpPtr->AdcStreamingNumSamples);
+			Number_Of_Samples_Finished =  (GrpPtr->NumberOfSamplesFinished);
+			if(((ADCRIS_REG(GrpPtr->AdcModule)) & (1<<(GrpPtr->AdcSequencer))) != 0)
 			{
-				GrpPtr->Adc_Status = ADC_STREAM_COMPLETED;
+				// Acknowledge that conversion by clearing the interrupt flag bit.in ADCISC Register.
+			  ADCISC_REG(GrpPtr->AdcModule) |= GrpPtr->AdcSequencer;
+			
+				// Move the result in the group result buffer.
+				for(loop_idx = (Number_Of_Samples_Finished*Number_Of_Samples_Req_Group);
+				loop_idx < (Number_Of_Samples_Req_Group*(Number_Of_Samples_Finished+1)) ; loop_idx++)
+				{
+					*((GrpPtr->Group_Buffer)+loop_idx) =  ADC_SSFIFO((GrpPtr -> AdcModule), (GrpPtr -> AdcSequencer));
+				}
+				
+				// Increment the number of samples finished by one
+				(GrpPtr->NumberOfSamplesFinished)++;
+				
+				// check if the stream has finished.
+				if(GrpPtr->NumberOfSamplesFinished == GrpPtr->AdcStreamingNumSamples)
+				{
+					    // put the status to stream completed.
+							// start the number of samples finised from zero again.
+							GrpPtr->Adc_Status = ADC_STREAM_COMPLETED;
+							GrpPtr->NumberOfSamplesFinished=0;
+				}
+				else 
+				{
+					GrpPtr->Adc_Status = ADC_BUSY;
+				}
+				
 			}
 			else
 			{
 				GrpPtr->Adc_Status = ADC_BUSY;
 			}
 		}
-		return (GrpPtr -> Adc_Status);
+		Adc_Status = (GrpPtr -> Adc_Status);
+		return Adc_Status;
 }
 
 
@@ -371,7 +425,7 @@ Adc_StatusType Adc_GetGroupStatus(uint8_t AdcGroupIdx)
 Adc_FunctionValidation  Adc_ReadGroup(uint8_t AdcGroupIdx, uint16_t *DataBufferPtr)
 {
 		Adc_FunctionValidation Function_ValidationReturn = ADC_OK;
-		uint8_t Loop_Idx = 0;
+		uint8_t loop_idx = 0;
 		 AdcGroup *GrpPtr;
 		if(AdcGroupIdx >= NUMBER_OF_ADC_GROUPS)
 		{
@@ -380,14 +434,10 @@ Adc_FunctionValidation  Adc_ReadGroup(uint8_t AdcGroupIdx, uint16_t *DataBufferP
 		else 
 		{
 			GrpPtr =  &Adc_GroupParameters[AdcGroupIdx];
-			for(Loop_Idx = 0; (Loop_Idx <  GrpPtr->AdcChannelsNum) ; Loop_Idx++)
+			for(loop_idx = 0; loop_idx <  ((GrpPtr->AdcChannelsNum)*(GrpPtr->AdcStreamingNumSamples)) ; loop_idx++)
 			{
-				(*(DataBufferPtr+Loop_Idx)) = ADC_SSFIFO((GrpPtr -> AdcModule), (GrpPtr -> AdcSequencer));
+				(*(DataBufferPtr+loop_idx)) = (*((GrpPtr->Group_Buffer)+loop_idx));
 			}
-			
-			// Acknowledge that conversion by clearing the interrupt flag bit.in ADCISC Register.
-			ADCISC_REG(GrpPtr->AdcModule) |= GrpPtr->AdcSequencer;
-			
 			// Check the next status to this ADC_Group.
 			// If the trigger source Continuous or Hardware Trigger then Status will be busy.
 			// else status is idle.
@@ -413,14 +463,17 @@ Adc_FunctionValidation Adc_StartGroupConversion(uint8_t AdcGroupIdx)
 	Adc_FunctionValidation Function_ValidationReturn = ADC_OK;	// Function Validation Check.
 	uint8_t Number_Of_Busy_Groups=0;
 	 AdcGroup *GrpPtr;
-	uint8_t Loop_Idx = 0;
+	uint8_t loop_idx = 0;
 	
 	// validation of input parameter. 
 	if( AdcGroupIdx >= NUMBER_OF_ADC_GROUPS)
 	{
 		Function_ValidationReturn = ADC_E_PARAM_GROUP;		// wrong parameter number.
 	}
-	
+	else if (Adc_ResultBufferInitialized[AdcGroupIdx] != 1)
+	{
+		Function_ValidationReturn = ADC_E_BUFFER_UNINIT;
+	}
 	else 
 	{
 		GrpPtr = &Adc_GroupParameters[AdcGroupIdx];
@@ -474,18 +527,20 @@ Adc_FunctionValidation Adc_StartGroupConversion(uint8_t AdcGroupIdx)
 
 /***************************************************************************************
  * This function used to enable interrupt for specific group
- * takes group id, the interrupt priority
+ * takes group id.
  ***************************************************************************************/
- void Adc_EnableGroupNotification(uint8_t AdcGroupIdx, uint8_t PRI)
+ void Adc_EnableGroupNotification(uint8_t AdcGroupIdx)
 {
 	AdcGroup* GrpPtr;  
 	
-	
 	GrpPtr = &Adc_GroupParameters[AdcGroupIdx];
+	
+	// Group Notificaion is enabled.
+	(GrpPtr->Adc_GroupNotificaton) = ADC_GROUP_NOTIFICATION_ENABLED;
+	
+	// Configure the interrupt by enabling and arming the interrupt.
 	ADCIM_REG(GrpPtr -> AdcModule) |= (1 << GrpPtr -> AdcSequencer);
-	
-	
-	SET_INT_PRI(Adc_SSIRQ[GrpPtr->AdcModule][GrpPtr->AdcSequencer],PRI);
+	SET_INT_PRI(Adc_SSIRQ[GrpPtr->AdcModule][GrpPtr->AdcSequencer],GrpPtr->Adc_GroupPriority);
 	EN_INT(Adc_SSIRQ[GrpPtr->AdcModule][GrpPtr->AdcSequencer]);	
 }
 
@@ -617,22 +672,22 @@ static Adc_FunctionValidation ADC_ConfigureModule1(void)
 static void Adc_ConfigureSequencern(uint8_t AdcGroupIdx)
 {
 	const AdcGroup *GrpPtr;
-	uint8_t Loop_Idx=0;
+	uint8_t loop_idx=0;
 	GrpPtr = &Adc_GroupParameters[AdcGroupIdx];
 	
 	// Adjust input channels of the corresponding sequencer. 
-	for (Loop_Idx=0; Loop_Idx < (GrpPtr->AdcChannelsNum) ; Loop_Idx++)
+	for (loop_idx=0; loop_idx < (GrpPtr->AdcChannelsNum) ; loop_idx++)
 	{
 		//clear the corresponding four bits
-		ADC_SSMUX(GrpPtr->AdcModule, GrpPtr->AdcSequencer) &= ~(0x0F << (Loop_Idx*4)); 
-		ADC_SSMUX(GrpPtr->AdcModule, GrpPtr->AdcSequencer) |= ((GrpPtr->AdcGroupDefinition[Loop_Idx]) << (Loop_Idx*4));
+		ADC_SSMUX(GrpPtr->AdcModule, GrpPtr->AdcSequencer) &= ~(0x0F << (loop_idx*4)); 
+		ADC_SSMUX(GrpPtr->AdcModule, GrpPtr->AdcSequencer) |= ((GrpPtr->AdcGroupDefinition[loop_idx]) << (loop_idx*4));
 	}
 	
 	
 	// first clear all control bits for the range of this channel-group samples.
-	for (Loop_Idx=0; Loop_Idx < (GrpPtr->AdcChannelsNum) ; Loop_Idx++)
+	for (loop_idx=0; loop_idx < (GrpPtr->AdcChannelsNum) ; loop_idx++)
 	{
-		ADC_SSCTL(GrpPtr->AdcModule, GrpPtr->AdcSequencer) &= ~(0x0F << (Loop_Idx*4));
+		ADC_SSCTL(GrpPtr->AdcModule, GrpPtr->AdcSequencer) &= ~(0x0F << (loop_idx*4));
 	}
 	
 	// Set the IE bit and the end bit at the nibble of the last conversion. 

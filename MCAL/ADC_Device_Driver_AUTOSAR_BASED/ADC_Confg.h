@@ -50,7 +50,14 @@
 #define SAMPLESEQ2M1PRI	1
 #define SAMPLESEQ3M1PRI	0
 /*****************************************************************************************/
-
+void AdcGroup0_CallBack();
+void AdcGroup1_CallBack();
+void AdcGroup2_CallBack();
+void AdcGroup3_CallBack();
+void AdcGroup4_CallBack();
+void AdcGroup5_CallBack();
+void AdcGroup6_CallBack();
+void AdcGroup7_CallBack();
 
 /********************************Sample Sequencers Triggering event************************************************/
 
