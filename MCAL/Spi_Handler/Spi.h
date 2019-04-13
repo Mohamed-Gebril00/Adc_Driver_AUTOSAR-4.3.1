@@ -14,11 +14,13 @@
 	
 #define SPI_MODULE_ID									083		
 #define SPI_INSTANCE_ID									0
-/* API Ids from SPI_SWS document */
 
+
+/* API Service-Ids from SPI_SWS document */
 #define SPI_INIT_SID													0x00
 #define SPI_SETUP_EB_SID											0x05
-
+#define SPI_GET_JOB_RESULT_SID								0x07
+#define SPI_GET_SEQUENCE_RESULT_SID						0x08
 
 
 /* Errors IDs P.48 SPI_SWS */
@@ -119,6 +121,8 @@ Std_ReturnType Spi_SyncTransmit(
 							   );
 
 /* main function */
-void Spi_MainFunction_Handling(void);
+void Spi_MainFunction_Handling(
+void
+);
 
 #endif

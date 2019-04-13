@@ -83,13 +83,13 @@ static Spi_SeqPendingReqType Spi_SeqPendingReq[SPI_HW_UNITS] =
 };	
 
 /* Global array hold the running sequence for each hw_unit to be able to retrieve it every cyclic call */
-static sint8 Spi_SeqRunning[SPI_HW_UNITS]={0};
+static uint8 Spi_SeqRunning[SPI_HW_UNITS]={0};
 	
 /* Global array hold the running Job for each hw_unit to be able to retrieve it every cyclic call */
-static sint8 Spi_JobRunning[SPI_HW_UNITS]={0};
+static uint8 Spi_JobRunning[SPI_HW_UNITS]={0};
 
 /* Global array hold the running Channel for each hw_unit to be able to retrieve it every cyclic call */
-static sint8 Spi_ChRunning[SPI_HW_UNITS]={0};
+static uint8 Spi_ChRunning[SPI_HW_UNITS]={0};
 
 /* Global array hold the number of finished data unit inside every channel */ 
 static uint8 Spi_ChFinishedTrans[SPI_MAX_CHANNEL]={0};
@@ -282,38 +282,42 @@ Std_ReturnType Spi_AsyncTransmit(
 }
 
 
+/*
+Description: Service returns the SPI Handler/Driver software module status.
+*/
 
 /***************************************************************************************************************************/
 void Spi_MainFunction_Handling(void)
 {
 		
-		uint8 spiGebroLoopIdx;
+		uint8 spiHwUnitGebroLoopIdx;
 		uint32 seqIdx=0;
 		uint32	jobIdx=0;
-		uint8 chIdx=0;
+		uint32 chIdx=0;
+		uint8 spiDataGebroLoopIdx;
   	DISABLE_INTERRUPT();
 		/* check if there is no running sequence. */
 
-		for(spiGebroLoopIdx=SPI_HW_UNIT_0; spiGebroLoopIdx<=SPI_HW_UNIT_3; spiGebroLoopIdx++)
+		for(spiHwUnitGebroLoopIdx=SPI_HW_UNIT_0; spiHwUnitGebroLoopIdx<=SPI_HW_UNIT_3; spiHwUnitGebroLoopIdx++)
 		{
-		if(SPI_IDLE == Spi_HWUnitStatus[spiGebroLoopIdx])
+		switch(Spi_HWUnitStatus[spiHwUnitGebroLoopIdx])
 		{
-			/* check if there is pending requests. */
-				if(Spi_SeqPendingReq[spiGebroLoopIdx].Size > 0)
+			case(SPI_IDLE):
+				if(Spi_SeqPendingReq[spiHwUnitGebroLoopIdx].Size > 0)
 				{
 					// hw unit state is busy.
-					Spi_HWUnitStatus[spiGebroLoopIdx]=SPI_BUSY;
+					Spi_HWUnitStatus[spiHwUnitGebroLoopIdx]=SPI_BUSY;
 					
 					// pop sequence to be transmitted.
-					Spi_SeqRunning[spiGebroLoopIdx]=POP_REQ(spiGebroLoopIdx);
-					seqIdx = Spi_SeqRunning[spiGebroLoopIdx];
+					Spi_SeqRunning[spiHwUnitGebroLoopIdx]=POP_REQ(spiHwUnitGebroLoopIdx);
+					seqIdx = Spi_SeqRunning[spiHwUnitGebroLoopIdx];
 					
 					//start transmit from the first job at idx 0 at the job-list.
 					seqRunningJobIdx[seqIdx]=0;
 					
 					// save the idx that is transmitted.
-					Spi_JobRunning[spiGebroLoopIdx]=Sequence_Cfg[jobIdx].SpiJobAssignment[seqRunningJobIdx[jobIdx]];
-					jobIdx = Spi_JobRunning[spiGebroLoopIdx];
+					Spi_JobRunning[spiHwUnitGebroLoopIdx]=Sequence_Cfg[jobIdx].SpiJobAssignment[seqRunningJobIdx[jobIdx]];
+					jobIdx = Spi_JobRunning[spiHwUnitGebroLoopIdx];
 					
 					// job state to pending.
 					spiJobResult[jobIdx]=SPI_JOB_PENDING;
@@ -321,29 +325,29 @@ void Spi_MainFunction_Handling(void)
 					// channel-idx within the job to be transmitted equals to 0.
 					// indicate first channel.
 					Job_Cfg[jobIdx].SpiRunningChIdx=0;
-					Spi_ChRunning[spiGebroLoopIdx]=Job_Cfg[jobIdx].ChannelList[Job_Cfg[jobIdx].SpiRunningChIdx];
-					chIdx=Spi_ChRunning[spiGebroLoopIdx];
+					Spi_ChRunning[spiHwUnitGebroLoopIdx]=Job_Cfg[jobIdx].ChannelList[Job_Cfg[jobIdx].SpiRunningChIdx];
+					chIdx=Spi_ChRunning[spiHwUnitGebroLoopIdx];
 					
 					// count the finished data-bytes=0.
-					Spi_ChFinishedTrans[Spi_ChRunning[spiGebroLoopIdx]]=0;
+					Spi_ChFinishedTrans[Spi_ChRunning[spiHwUnitGebroLoopIdx]]=0;
 				}
 				else 
 				{
 					// do_nothing.
-				}	
-		}
-		else
-		{
+				}
+			break;
+		
+		  case (SPI_BUSY):
 			/* check channel finished all data in it or not if finished 
 			check EOT bit to make sure all data has been transmitted
 			check if job finished all channels in it or not if finished 
 			check if sequence finished all jobs in it or not 
 			if finished make hwunit idle */
-			seqIdx = Spi_SeqRunning[spiGebroLoopIdx];
-			jobIdx = Spi_JobRunning[spiGebroLoopIdx];
-			chIdx = Spi_ChRunning[spiGebroLoopIdx];
-			if(Spi_EbDataLength[chIdx] == Spi_ChFinishedTrans[chIdx])
-			{
+				seqIdx = Spi_SeqRunning[spiHwUnitGebroLoopIdx];
+				jobIdx = Spi_JobRunning[spiHwUnitGebroLoopIdx];
+				chIdx = Spi_ChRunning[spiHwUnitGebroLoopIdx];
+				if(Spi_EbDataLength[chIdx] == Spi_ChFinishedTrans[chIdx])
+				{
 						Job_Cfg[jobIdx].SpiRunningChIdx++;
 				
 						// if job has finished 
@@ -356,57 +360,115 @@ void Spi_MainFunction_Handling(void)
 							if(seqRunningJobIdx[seqIdx] == Sequence_Cfg[jobIdx].SpiJobsNumber)
 							{
 								spiSeqResult[seqIdx]=SPI_SEQ_OK;
-								Spi_HWUnitStatus[spiGebroLoopIdx]=SPI_IDLE;
+								Spi_HWUnitStatus[spiHwUnitGebroLoopIdx]=SPI_IDLE;
 							}
 							// not finished then insert the other job
 							else 
 							{
-								Spi_JobRunning[spiGebroLoopIdx]=Sequence_Cfg[seqIdx].SpiJobAssignment[seqRunningJobIdx[seqIdx]]; 
+								Spi_JobRunning[spiHwUnitGebroLoopIdx]=Sequence_Cfg[seqIdx].SpiJobAssignment[seqRunningJobIdx[seqIdx]]; 
 								spiJobResult[jobIdx]=SPI_JOB_PENDING;
-								Job_Cfg[Spi_JobRunning[spiGebroLoopIdx]].SpiRunningChIdx=0;
-								Spi_ChRunning[spiGebroLoopIdx]=Job_Cfg[jobIdx].ChannelList[Job_Cfg[jobIdx].SpiRunningChIdx];
-								Spi_ChFinishedTrans[Spi_ChRunning[spiGebroLoopIdx]]=0;
+								Job_Cfg[Spi_JobRunning[spiHwUnitGebroLoopIdx]].SpiRunningChIdx=0;
+								Spi_ChRunning[spiHwUnitGebroLoopIdx]=Job_Cfg[jobIdx].ChannelList[Job_Cfg[jobIdx].SpiRunningChIdx];
+								Spi_ChFinishedTrans[Spi_ChRunning[spiHwUnitGebroLoopIdx]]=0;
 							}
 						}
 						else 
 						{
-							 Spi_ChRunning[spiGebroLoopIdx]=Job_Cfg[jobIdx].ChannelList[Job_Cfg[jobIdx].SpiRunningChIdx];
-							 Spi_ChFinishedTrans[Spi_ChRunning[spiGebroLoopIdx]]=0;
+							 Spi_ChRunning[spiHwUnitGebroLoopIdx]=Job_Cfg[jobIdx].ChannelList[Job_Cfg[jobIdx].SpiRunningChIdx];
+							 Spi_ChFinishedTrans[Spi_ChRunning[spiHwUnitGebroLoopIdx]]=0;
 						}
-			}
-			// channel not finished send the coming bytes
-			else
-			{
-				
-				for(spiGebroLoopIdx=0; 
-				(spiGebroLoopIdx<SPI_DATA_TRANSMIT_PER_SLOT)&&(TRANSMIT_FIFO_NOT_FULL(spiGebroLoopIdx))
-				&&(Spi_EbDataLength[chIdx]!= Spi_ChFinishedTrans[chIdx]);spiGebroLoopIdx++)
-				{
-					if(NULL_PTR == Spi_SrcEbAddressPtr[chIdx])
-					{
-							SPIDR_REG(spiGebroLoopIdx)=Channel_Cfg[chIdx].SpiDefaultData;
-					}
-					else
-					{
-								SPIDR_REG(spiGebroLoopIdx)=(*(Spi_SrcEbAddressPtr[chIdx]+Spi_ChFinishedTrans[chIdx]));
-					}
-					if(Spi_DesEbAddressPtr != NULL_PTR)
-					{
-						(*(Spi_DesEbAddressPtr[chIdx]+Spi_ChFinishedTrans[chIdx]))= SPIDR_REG(spiGebroLoopIdx);
-					}
-					else 
-					{
-						// d-nothing
-					}
-					Spi_ChFinishedTrans[chIdx]=Spi_ChFinishedTrans[chIdx]+1;
 				}
-			}
+				else			// channel not finished send the coming bytes
+				{
+					for(spiDataGebroLoopIdx=0; 
+					(spiDataGebroLoopIdx<SPI_DATA_TRANSMIT_PER_SLOT)&&(TRANSMIT_FIFO_NOT_FULL(spiHwUnitGebroLoopIdx))
+					&&(Spi_EbDataLength[chIdx]!= Spi_ChFinishedTrans[chIdx]);spiDataGebroLoopIdx++)
+					{
+						if(NULL_PTR == Spi_SrcEbAddressPtr[chIdx])
+						{
+							SPIDR_REG(spiHwUnitGebroLoopIdx)=Channel_Cfg[chIdx].SpiDefaultData;
+						}
+						else
+						{
+							SPIDR_REG(spiHwUnitGebroLoopIdx)=(*(Spi_SrcEbAddressPtr[chIdx]+Spi_ChFinishedTrans[chIdx]));
+						}
+						if(Spi_DesEbAddressPtr != NULL_PTR)
+						{
+							(*(Spi_DesEbAddressPtr[chIdx]+Spi_ChFinishedTrans[chIdx]))= SPIDR_REG(spiHwUnitGebroLoopIdx);
+						}
+						else 
+						{
+							// do-nothing
+						}
+						Spi_ChFinishedTrans[chIdx]=Spi_ChFinishedTrans[chIdx]+1;
+					}
+				}
+			break;
+	
+			default: // Do_Nothing
+			break;
 		}
+}
+	ENABLE_INTERRUPT();
+}
+
+/* This service returns the last transmission result of the specified Job.
+Return value: Spi_JobResultType */							
+Spi_JobResultType Spi_GetJobResult( 
+									Spi_JobType Job
+								  )
+{
+	 Spi_JobResultType Spi_JobResult = SPI_JOB_OK;
+		#if(SPI_DEV_ERROR_DETECT==STD_ON)
+		/* Check the Adc driver state Configure */
+		if(Spi_HandlerStateType == SPI_HANDLER_NOT_INITIALIZED)
+		{
+			/* report the error to the det module */
+			Det_ReportError(SPI_MODULE_ID, SPI_INSTANCE_ID, SPI_GET_JOB_RESULT_SID, SPI_E_UNINIT);
+		}
+		if(Job >= SPI_MAX_Job)
+		{
+			/* report the error to the det module */
+			Det_ReportError(SPI_MODULE_ID, SPI_INSTANCE_ID, SPI_GET_JOB_RESULT_SID, SPI_E_PARAM_SEQUENCE);
+		}
+		else
+	#endif
+	{
+		Spi_JobResult=spiJobResult[Job];
 	}
-		ENABLE_INTERRUPT();
+	
+	return Spi_JobResult;
 }
 
 
+/*  Return value: Spi_SeqResultType 
+	Parameters: Sequence ID. An invalid sequence ID will return an undefined result.
+	This service returns the last transmission result of the specified Sequence. */
+Spi_SeqResultType Spi_GetSequenceResult( 
+											Spi_SequenceType Sequence
+									    )
+{
+	 Spi_SeqResultType Spi_SeqResult = SPI_SEQ_OK;
+		#if(SPI_DEV_ERROR_DETECT==STD_ON)
+		/* Check the Adc driver state Configure */
+		if(Spi_HandlerStateType == SPI_HANDLER_NOT_INITIALIZED)
+		{
+			/* report the error to the det module */
+			Det_ReportError(SPI_MODULE_ID, SPI_INSTANCE_ID, SPI_GET_JOB_RESULT_SID, SPI_E_UNINIT);
+		}
+		if(Seqiemce >= SPI_MAX_SEQUENCE)
+		{
+			/* report the error to the det module */
+			Det_ReportError(SPI_MODULE_ID, SPI_INSTANCE_ID, SPI_GET_JOB_RESULT_SID, SPI_E_PARAM_SEQUENCE);
+		}
+		else
+	#endif
+	{
+		Spi_SeqResult=spiSeqResult[Sequence];
+	}
+	
+	return Spi_SeqResult;
+}
 
 /*****************************************************************************************************************************/
 /* Configuring the bit rate for spi module by setting the values Serial clock rate

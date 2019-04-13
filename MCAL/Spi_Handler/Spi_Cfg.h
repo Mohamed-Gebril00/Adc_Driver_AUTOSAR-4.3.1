@@ -5,7 +5,7 @@
 
 /* This defines the range of data to be transmitted every time the main function is called
  max is 8, min = 1*/
-#define SPI_DATA_TRANSMIT_PER_SLOT		4
+#define SPI_DATA_TRANSMIT_PER_SLOT		8
 
 #define DIO_GROUP_JOB_0						4
 
